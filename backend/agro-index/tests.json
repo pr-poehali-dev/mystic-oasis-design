@@ -1,0 +1,28 @@
+{
+  "tests": [
+    {
+      "name": "Get current index and week history",
+      "method": "GET",
+      "path": "/?period=week",
+      "expectedStatus": 200,
+      "expectedBody": {"current": {"value": 1000000000.0}},
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get month history",
+      "method": "GET",
+      "path": "/?period=month",
+      "expectedStatus": 200,
+      "expectedBody": {"current": {"value": 1000000000.0}},
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get all time history",
+      "method": "GET",
+      "path": "/?period=all",
+      "expectedStatus": 200,
+      "expectedBody": {"current": {"value": 1000000000.0}},
+      "bodyMatcher": "partial"
+    }
+  ]
+}

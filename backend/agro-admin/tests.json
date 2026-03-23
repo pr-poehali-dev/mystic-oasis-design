@@ -1,0 +1,22 @@
+{
+  "tests": [
+    {
+      "name": "Login with wrong password",
+      "method": "POST",
+      "path": "/",
+      "body": {"action": "login", "password": "wrong"},
+      "expectedStatus": 401,
+      "expectedBody": {"ok": false},
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Login with correct password",
+      "method": "POST",
+      "path": "/",
+      "body": {"action": "login", "password": "FC52de_marker"},
+      "expectedStatus": 200,
+      "expectedBody": {"ok": true},
+      "bodyMatcher": "partial"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "tests": [
+    {
+      "name": "Get agro news",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {"news": []},
+      "bodyMatcher": "partial"
+    }
+  ]
+}

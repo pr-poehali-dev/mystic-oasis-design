@@ -59,6 +59,16 @@ export default function AgroIndex() {
       ? ((data[data.length - 1].value - data[0].value) / data[0].value) * 100
       : null
 
+  // Динамический domain для Y-оси: ±5% от реального диапазона данных
+  const values = chartData.map((d) => d.value)
+  const minVal = values.length ? Math.min(...values) : 0
+  const maxVal = values.length ? Math.max(...values) : 1
+  const padding = (maxVal - minVal) * 0.1 || maxVal * 0.001
+  const yDomain: [number, number] = [
+    Math.floor(minVal - padding),
+    Math.ceil(maxVal + padding),
+  ]
+
   return (
     <section id="analytics" className="py-16 sm:py-24 px-4 sm:px-6 bg-white">
       <div className="max-w-4xl mx-auto">
@@ -126,13 +136,14 @@ export default function AgroIndex() {
                   tickLine={false}
                 />
                 <YAxis
+                  domain={yDomain}
                   tick={{ fontSize: 11, fill: "#aaa", fontFamily: "monospace" }}
                   axisLine={false}
                   tickLine={false}
                   tickFormatter={(v) =>
-                    new Intl.NumberFormat("ru-RU", { notation: "compact" }).format(v)
+                    new Intl.NumberFormat("ru-RU").format(v)
                   }
-                  width={60}
+                  width={90}
                 />
                 <Tooltip
                   contentStyle={{

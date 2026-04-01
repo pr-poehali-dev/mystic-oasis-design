@@ -84,6 +84,9 @@ export default function AgroIndex() {
           <span className="text-5xl sm:text-6xl font-normal tracking-[-0.03em] text-black">
             {current ? formatValue(current.value) : "—"}
           </span>
+          <span className="text-lg mb-2 font-mono text-gray-500">
+            4,6 из 7 баллов
+          </span>
           {change !== null && (
             <span
               className={`text-lg mb-2 font-mono ${

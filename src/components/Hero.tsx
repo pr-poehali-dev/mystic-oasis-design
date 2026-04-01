@@ -1,6 +1,58 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
+import { TrendingUp, TrendingDown, Minus } from "lucide-react"
+
+const API_URL = "https://functions.poehali.dev/5e5acda2-923a-4477-a7fc-3f43fdc7a32c"
+
+function formatValue(value: number) {
+  return new Intl.NumberFormat("ru-RU").format(value)
+}
+
+function IndexBadge() {
+  const [value, setValue] = useState<number | null>(null)
+  const [change, setChange] = useState<number | null>(null)
+
+  useEffect(() => {
+    fetch(`${API_URL}?period=week`)
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.current?.value != null) setValue(json.current.value)
+        if (json.history?.length >= 2) {
+          const hist = json.history
+          const pct =
+            ((hist[hist.length - 1].value - hist[0].value) / hist[0].value) * 100
+          setChange(pct)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  if (value === null) return null
+
+  const Icon =
+    change === null ? Minus : change > 0 ? TrendingUp : change < 0 ? TrendingDown : Minus
+  const color =
+    change === null ? "text-gray-400" : change > 0 ? "text-green-600" : change < 0 ? "text-red-500" : "text-gray-400"
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.1, duration: 0.5 }}
+      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/70 backdrop-blur-sm border border-gray-200 shadow-sm"
+    >
+      <span className="text-xs font-mono uppercase tracking-widest text-gray-400">Агро Индекс</span>
+      <span className="text-sm font-mono font-medium text-black">{formatValue(value)}</span>
+      <span className={`flex items-center gap-0.5 text-xs font-mono ${color}`}>
+        <Icon size={13} strokeWidth={2} />
+        {change !== null && (
+          <span>{change >= 0 ? "+" : ""}{change.toFixed(2)}%</span>
+        )}
+      </span>
+    </motion.div>
+  )
+}
 
 function GodRaysBackground() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -61,6 +113,7 @@ export default function Hero() {
       </div>
 
       <div className="relative z-10 flex flex-col items-center gap-4 sm:gap-6 text-center">
+        <IndexBadge />
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[90%] tracking-[-0.03em] text-black mix-blend-exclusion max-w-2xl">
           Аналитика и новости агрорынка
         </h1>

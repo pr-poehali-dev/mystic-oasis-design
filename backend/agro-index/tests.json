@@ -5,7 +5,7 @@
       "method": "GET",
       "path": "/?period=week",
       "expectedStatus": 200,
-      "expectedBody": {"current": {"value": 1000000000.0}},
+      "expectedBody": {"current": {"value": 1000010726.0, "rating": 4.6}},
       "bodyMatcher": "partial"
     },
     {
@@ -13,7 +13,7 @@
       "method": "GET",
       "path": "/?period=month",
       "expectedStatus": 200,
-      "expectedBody": {"current": {"value": 1000000000.0}},
+      "expectedBody": {"current": {"value": 1000010726.0, "rating": 4.6}},
       "bodyMatcher": "partial"
     },
     {
@@ -21,7 +21,7 @@
       "method": "GET",
       "path": "/?period=all",
       "expectedStatus": 200,
-      "expectedBody": {"current": {"value": 1000000000.0}},
+      "expectedBody": {"current": {"value": 1000010726.0, "rating": 4.6}},
       "bodyMatcher": "partial"
     }
   ]

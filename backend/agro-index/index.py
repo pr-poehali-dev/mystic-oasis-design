@@ -32,24 +32,25 @@ def handler(event: dict, context) -> dict:
     conn = psycopg2.connect(os.environ["DATABASE_URL"])
     cur = conn.cursor()
 
-    # Текущее значение (последняя запись)
-    cur.execute("SELECT value, recorded_at FROM agro_index ORDER BY recorded_at DESC LIMIT 1")
+    # Текущее значение (последняя запись, только реальные данные с 2019 года)
+    cur.execute("SELECT value, recorded_at, rating FROM agro_index WHERE recorded_at >= '2019-01-01' ORDER BY recorded_at DESC LIMIT 1")
     row = cur.fetchone()
     current_value = float(row[0]) if row else 0
     current_date = row[1].isoformat() if row else None
+    current_rating = float(row[2]) if row and row[2] is not None else None
 
-    # История за период
+    # История за период (только реальные данные с 2019 года)
     days = period_map[period]
     if days:
         cur.execute(
-            "SELECT recorded_at, value FROM agro_index WHERE recorded_at >= CURRENT_DATE - %s ORDER BY recorded_at ASC",
+            "SELECT recorded_at, value, rating, month_year FROM agro_index WHERE recorded_at >= '2019-01-01' AND recorded_at >= CURRENT_DATE - %s ORDER BY recorded_at ASC",
             (days,)
         )
     else:
-        cur.execute("SELECT recorded_at, value FROM agro_index ORDER BY recorded_at ASC")
+        cur.execute("SELECT recorded_at, value, rating, month_year FROM agro_index WHERE recorded_at >= '2019-01-01' ORDER BY recorded_at ASC")
 
     rows = cur.fetchall()
-    history = [{"date": r[0].isoformat(), "value": float(r[1])} for r in rows]
+    history = [{"date": r[0].isoformat(), "value": float(r[1]), "rating": float(r[2]) if r[2] is not None else None, "month_year": r[3]} for r in rows]
 
     cur.close()
     conn.close()
@@ -58,7 +59,7 @@ def handler(event: dict, context) -> dict:
         "statusCode": 200,
         "headers": headers,
         "body": json.dumps({
-            "current": {"value": current_value, "date": current_date},
+            "current": {"value": current_value, "date": current_date, "rating": current_rating},
             "history": history,
         }),
     }

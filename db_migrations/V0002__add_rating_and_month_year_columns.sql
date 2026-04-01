@@ -1,0 +1,2 @@
+ALTER TABLE t_p56970498_mystic_oasis_design.agro_index ADD COLUMN IF NOT EXISTS rating numeric(4,2) NULL;
+ALTER TABLE t_p56970498_mystic_oasis_design.agro_index ADD COLUMN IF NOT EXISTS month_year varchar(20) NULL;

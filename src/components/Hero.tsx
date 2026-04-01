@@ -87,6 +87,51 @@ function GodRaysBackground() {
   )
 }
 
+function StickyIndexBadge() {
+  const [value, setValue] = useState<number | null>(null)
+  const [change, setChange] = useState<number | null>(null)
+
+  useEffect(() => {
+    fetch(`${API_URL}?period=week`)
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.current?.value != null) setValue(json.current.value)
+        if (json.history?.length >= 2) {
+          const hist = json.history
+          const pct =
+            ((hist[hist.length - 1].value - hist[0].value) / hist[0].value) * 100
+          setChange(pct)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  if (value === null) return null
+
+  const Icon =
+    change === null ? Minus : change > 0 ? TrendingUp : change < 0 ? TrendingDown : Minus
+  const color =
+    change === null ? "text-gray-400" : change > 0 ? "text-green-600" : change < 0 ? "text-red-500" : "text-gray-400"
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2, duration: 0.4 }}
+      className="fixed top-4 left-1/2 -translate-x-1/2 z-50 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-md border border-gray-200 shadow-md"
+    >
+      <span className="text-xs font-mono uppercase tracking-widest text-gray-400">Агро Индекс</span>
+      <span className="text-sm font-mono font-medium text-black">{formatValue(value)}</span>
+      <span className={`flex items-center gap-0.5 text-xs font-mono ${color}`}>
+        <Icon size={13} strokeWidth={2} />
+        {change !== null && (
+          <span>{change >= 0 ? "+" : ""}{change.toFixed(2)}%</span>
+        )}
+      </span>
+    </motion.div>
+  )
+}
+
 export default function Hero() {
   const handleScroll = () => {
     const section = document.getElementById("analytics")
@@ -97,6 +142,9 @@ export default function Hero() {
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center px-4 sm:px-6 py-12 sm:py-20">
+      {/* Sticky top badge */}
+      <StickyIndexBadge />
+
       {/* GodRays Background */}
       <div className="absolute inset-0">
         <GodRaysBackground />
